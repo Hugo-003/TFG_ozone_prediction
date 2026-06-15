@@ -125,31 +125,8 @@ def run():
     print(df_horizontes.to_string(index=False))
     plot_degradacion_por_horizonte(resultados_horizontes)
 
-    '''print("\n[INFO] Comparativa de rendimiento por horizonte temporal...")
 
-    processed_csv = Path("Data/processed/df_clean.csv")
-    resultados_horizontes = []
-
-    for h in [6, 12, 24]:
-        print(f"  Entrenando horizonte t+{h}h...")
-        df_h = pd.read_csv(processed_csv, parse_dates=['datetime'])
-        df_h, target_h = build_all_features(df_h, horizon=h)
-        Xtr, Xv, Xte, ytr, yv, yte = preparar_datos_modelo(df_h, target_col=target_h)
-        m = entrenar_lgbm(Xtr, Xv, ytr, yv, params=params_std)
-        preds_h = m.predict(Xte)
-        resultados_horizontes.append({
-            'horizon': h,
-            'MAE': mean_absolute_error(yte, preds_h),
-            'R2': r2_score(yte, preds_h)
-        })
-
-    df_horizontes = pd.DataFrame(resultados_horizontes)
-    print("\nComparativa por horizonte:")
-    print(df_horizontes.to_string(index=False))
-    plot_degradacion_por_horizonte(resultados_horizontes)'''
-
-
-    # 7. VISUALIZACIONES
+    # 8. VISUALIZACIONES
     print("\n[INFO] Generando visualizaciones...")
 
     plot_degradacion_por_horizonte(resultados_horizontes)
@@ -174,7 +151,7 @@ def run():
         modelo_std, modelo_q90, X_train.columns.tolist()
     )
 
-    # 8. PERSISTENCIA Y LOGS
+    # 9. PERSISTENCIA Y LOGS
     guardar_modelo(modelo_std, f'modelo_estandar_o3_t{HORIZON}h.pkl')
     guardar_modelo(modelo_q90, f'modelo_cuantil_q90_o3_t{HORIZON}h.pkl')
 
@@ -205,107 +182,3 @@ if __name__ == "__main__":
 # resultados = predecir_con_alerta(modelo, df_nuevos, umbral=180)
 
 #--------------------------------------------------------------------------------------------------------
-
-
-
-
-'''from pathlib import Path
-import pandas as pd
-
-from src.Data_treatment.preprocessing import load_all_data, save_processed_data
-from src.features.Build_features import build_all_features
-from src.Models.model1 import (
-    preparar_datos_modelo, entrenar_lgbm,
-    guardar_modelo, registrar_experimento
-)
-from src.Models.evaluate import evaluar_modelo
-from src.Models.train import entrenar_lgbm_cuantil
-from src.Visualization.Plots import (
-    plot_distribucion_o3,
-    plot_predicciones_vs_real,
-    plot_zoom_extremos,
-    plot_error_por_rango,
-    plot_estacionalidad_o3,
-    plot_importancia_features
-)
-
-
-def run():
-    print("=== PIPELINE DE PREDICCIÓN DE OZONO (CEAM) ===\n")
-
-    # 1. CARGA Y LIMPIEZA
-    processed_path = Path("Data/processed/df_clean.parquet")
-    if processed_path.exists():
-        print("[INFO] Cargando datos preprocesados desde parquet...")
-        df = pd.read_parquet(processed_path)
-    else:
-        print("[INFO] Procesando datos en bruto...")
-        df = load_all_data("Data/Raw_Data")
-        save_processed_data(df, processed_path)
-    print(f"[INFO] Registros tras limpieza: {len(df):,}\n")
-
-    # 2. INGENIERÍA DE CARACTERÍSTICAS
-    df = build_all_features(df)
-    print(f"[INFO] Registros tras feature engineering: {len(df):,}\n")
-
-    # 3. DIVISIÓN TEMPORAL
-    X_train, X_val, X_test, y_train, y_val, y_test = preparar_datos_modelo(df)
-
-    # 4. ENTRENAMIENTO — modelo estándar
-    params = {
-        'objective': 'regression',
-        'metric': 'mae',
-        'boosting_type': 'gbdt',
-        'learning_rate': 0.05,
-        'num_leaves': 30,
-        'verbose': -1
-    }
-    modelo_std = entrenar_lgbm(X_train, X_val, y_train, y_val, params=params)
-
-    # 5. ENTRENAMIENTO — modelo cuantil 0.90
-    modelo_q90 = entrenar_lgbm_cuantil(X_train, X_val, y_train, y_val, cuantil=0.90)
-
-    # 6. EVALUACIÓN COMPLETA
-    print("\n--- Modelo estándar ---")
-    metricas_std = evaluar_modelo(modelo_std, X_test, y_test, umbral_extremo=170)
-
-    print("\n--- Modelo cuantil 0.90 ---")
-    metricas_q90 = evaluar_modelo(modelo_q90, X_test, y_test, umbral_extremo=170)
-
-    # 7. PREDICCIONES PARA VISUALIZACIÓN
-    preds_std = modelo_std.predict(X_test)
-    preds_q90 = modelo_q90.predict(X_test)
-
-    # 8. VISUALIZACIONES
-    print("\n[INFO] Generando visualizaciones...")
-    plot_distribucion_o3(df['O3'])
-    plot_estacionalidad_o3(df)
-    plot_predicciones_vs_real(y_test, preds_std, titulo='Modelo estándar')
-    plot_predicciones_vs_real(y_test, preds_q90, titulo='Modelo cuantil 0.90')
-    plot_zoom_extremos(y_test, preds_std, preds_q90, umbral=170)
-    plot_error_por_rango(y_test, preds_std, titulo='Modelo estándar')
-    plot_error_por_rango(y_test, preds_q90, titulo='Modelo cuantil 0.90')
-    plot_importancia_features(modelo_std, X_train.columns.tolist())
-
-    # 9. PERSISTENCIA Y LOGS
-    guardar_modelo(modelo_std, 'modelo_estandar_o3.pkl')
-    guardar_modelo(modelo_q90, 'modelo_cuantil_q90_o3.pkl')
-
-    registrar_experimento(
-        metricas=metricas_std,
-        hyperparams=params,
-        features_usadas=X_train.columns.tolist()
-    )
-    registrar_experimento(
-        metricas=metricas_q90,
-        hyperparams={'objective': 'quantile', 'alpha': 0.90,
-                     'learning_rate': 0.05, 'num_leaves': 30},
-        features_usadas=X_train.columns.tolist()
-    )
-
-    print("\n=== PIPELINE COMPLETADO ===")
-
-
-if __name__ == "__main__":
-    run()'''
-
