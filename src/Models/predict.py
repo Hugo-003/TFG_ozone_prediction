@@ -6,7 +6,7 @@ from src.features.Build_features import build_all_features
 
 
 def cargar_modelo(ruta='models/modelo_final_o3.pkl'):
-    """Carga un modelo previamente entrenado."""
+    """Cargar un modelo previamente entrenado."""
     modelo = joblib.load(ruta)
     print(f"[INFO] Modelo cargado desde {ruta}")
     return modelo

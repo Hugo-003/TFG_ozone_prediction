@@ -22,10 +22,7 @@ def preparar_datos_modelo(df, target_col='O3_t24h'):
 
 
 def entrenar_lgbm(X_train, X_val, y_train, y_val, params=None):
-    """
-    Configura y entrena el modelo LightGBM.
-    Si no se pasan params, se usan los valores por defecto.
-    """
+   
     if params is None:
         params = {
             'objective': 'regression',

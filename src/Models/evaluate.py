@@ -8,12 +8,12 @@ def evaluar_modelo(modelo, X_test, y_test, umbral_extremo=170):
     - Métricas globales sobre todo el test set
     - Métricas específicas sobre los registros con O3 > umbral_extremo
     
-    Esta separación es el resultado central del TFG: el modelo funciona
+    el modelo funciona
     bien en régimen normal pero falla sistemáticamente en los extremos.
     """
     preds = modelo.predict(X_test)
 
-    # --- Métricas globales ---
+    # Métricas globales
     mae_global  = mean_absolute_error(y_test, preds)
     rmse_global = np.sqrt(mean_squared_error(y_test, preds))
     r2_global   = r2_score(y_test, preds)
@@ -23,7 +23,7 @@ def evaluar_modelo(modelo, X_test, y_test, umbral_extremo=170):
     print(f"  RMSE: {rmse_global:.2f}")
     print(f"  R²:   {r2_global:.4f}")
 
-    # --- Métricas en rango extremo ---
+    # Métricas en rango extremo 
     mask_extremo = y_test > umbral_extremo
     n_extremos = mask_extremo.sum()
 

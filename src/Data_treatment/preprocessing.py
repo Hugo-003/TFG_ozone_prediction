@@ -122,9 +122,3 @@ def save_processed_data(df, output_path):
     output_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(output_path, index=False)
     print(f"Datos guardados en {output_path}")
-
-'''def save_processed_data(df, output_path):
-    output_path = Path(output_path)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(output_path, index=False)
-    print(f"Datos guardados en {output_path}")'''

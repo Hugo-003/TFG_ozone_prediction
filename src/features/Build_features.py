@@ -7,7 +7,7 @@ def crear_lags(df, columnas_objetivo=["O3", "NO2"], lags=[1, 24, 48]):
     Crea variables de retraso (lags) agrupando por estación para evitar
     mezclar datos de diferentes puntos geográficos.
     
-    Nota: el dropna final elimina las primeras N horas de cada estación,
+    el dropna final elimina las primeras N horas de cada estación,
     donde N es el lag máximo (por defecto 48h).
     """
     df = df.sort_values(["station_id", "datetime"]).copy()
