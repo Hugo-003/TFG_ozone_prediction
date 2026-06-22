@@ -119,4 +119,4 @@ este repositorio.
 
 ## Autor
 
-Hugo Crespo Adroguer · [hugo-003](https://github.com/Hugo-003)
+Hugo Crespo Adroguer · [hugo-003](https://github.com/Hugo-003/TFG_ozone_prediction)
