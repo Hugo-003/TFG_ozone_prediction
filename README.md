@@ -40,6 +40,8 @@ TFG_ozone_prediction/
 
 ├── Main.py                       # Punto de entrada único del pipeline
 
+├── Main2(prueba)_ModeloGlobal_ModeloEspecializado.py    # Prueba entre modelos
+
 ├── .gitignore
 
 └── README.md

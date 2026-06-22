@@ -3,10 +3,6 @@
 """
 PRUEBA DEL MÓDULO DE INFERENCIA (tras la corrección de predict.py)
 ====================================================================
-Ahora que build_all_features() admite construir_target=False, ya no
-es necesario simular un margen futuro artificial: podemos usar
-directamente las filas más recientes de cada estación, igual que
-ocurriría con datos reales de "ahora mismo".
 
 Esta prueba simplemente comprueba que el pipeline completo
 (carga de modelo -> features -> predicción -> alerta) funciona sin

@@ -1,3 +1,4 @@
+
 # predict.py
 import joblib
 import pandas as pd
@@ -13,13 +14,12 @@ def cargar_modelo(ruta='models/modelo_final_o3.pkl'):
 
 
 def predecir(modelo, df_nuevos):
-    """
-    Aplica el pipeline de features y genera predicciones
-    sobre datos nuevos. Devuelve el dataframe con una columna
-    'O3_pred' añadida.
-    """
-    df = build_all_features(df_nuevos.copy())
+    
+    df, _ = build_all_features(df_nuevos.copy(), construir_target=False)
 
+    # Excluimos identificadores y la variable cruda de O3 actual.
+    # No hace falta excluir ninguna columna target aquí: en modo
+    # inferencia (construir_target=False) esa columna nunca se crea.
     cols_a_excluir = ['datetime', 'station_id', 'O3']
     features = [c for c in df.columns if c not in cols_a_excluir]
 

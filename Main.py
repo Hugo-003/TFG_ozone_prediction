@@ -173,12 +173,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
-
-# --- EJEMPLO DE USO EN PRODUCCIÓN ---
-# from src.Models.predict import cargar_modelo, predecir_con_alerta
-# modelo = cargar_modelo('models/modelo_estandar_o3.pkl')
-# df_nuevos = pd.read_parquet('Data/nuevos_datos.parquet')
-# resultados = predecir_con_alerta(modelo, df_nuevos, umbral=180)
-
-#--------------------------------------------------------------------------------------------------------

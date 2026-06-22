@@ -8,21 +8,28 @@ OUTPUT_DIR = Path("outputs/figures")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
+
 def plot_distribucion_o3(y, umbral=180, guardar=True):
     """
-    Histograma de la distribución completa de O3.
-    Muestra visualmente la escasez extrema de valores altos.
+    Histograma de la distribución de O3
     """
+    
+    y_valido = y[y >= 0]
+    
     fig, ax = plt.subplots(figsize=(10, 5))
 
-    ax.hist(y, bins=100, color='steelblue', edgecolor='none', alpha=0.85)
+    ax.hist(y_valido, bins=50, color='steelblue', edgecolor='none', alpha=0.85)
+    
     ax.axvline(umbral, color='red', linestyle='--', linewidth=1.5,
-               label=f'Umbral de alerta ({umbral} µg/m³)')
+                label=f'Umbral de alerta ({umbral} µg/m³)')
     ax.axvline(170, color='orange', linestyle='--', linewidth=1.2,
-               label='Umbral de análisis (170 µg/m³)')
+                label='Umbral de análisis (170 µg/m³)')
 
+    # Cálculo preciso sobre los datos originales
     n_extremos = (y > umbral).sum()
     pct = 100 * n_extremos / len(y)
+    
+    # Posicionamos el texto basándonos en los datos filtrados
     ax.text(umbral + 2, ax.get_ylim()[1] * 0.85,
             f'{n_extremos} registros\n({pct:.4f}%)',
             color='red', fontsize=9)
@@ -36,9 +43,10 @@ def plot_distribucion_o3(y, umbral=180, guardar=True):
     if guardar:
         fig.savefig(OUTPUT_DIR / 'distribucion_o3.png', dpi=150)
         print("[INFO] Guardado: distribucion_o3.png")
+    
     plt.show()
     plt.close()
-
+    
 
 def plot_predicciones_vs_real(y_test, preds, titulo='Modelo estándar', guardar=True):
     """
