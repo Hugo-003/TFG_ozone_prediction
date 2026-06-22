@@ -111,11 +111,6 @@ La carpeta `tests/` contiene scripts auxiliares usados durante el desarrollo
 para verificar partes concretas del sistema (no forman parte del pipeline
 principal).
 
-## Memoria completa
-
-El detalle metodológico completo, el marco teórico, el análisis exploratorio y
-la discusión de resultados se encuentran en la memoria del TFG, incluida en
-este repositorio.
 
 ## Autor
 
